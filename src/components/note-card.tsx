@@ -23,6 +23,7 @@ export function NoteCard({
   const [content, setContent] = useState(currentContent);
   const [shouldShowDeleteButton, setShouldShowDeleteButton] = useState(true);
   const [open, setOpen] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   function handleContentChange(event: ChangeEvent<HTMLTextAreaElement>) {
     setContent(event.target.value);
@@ -81,17 +82,41 @@ export function NoteCard({
           </div>
 
           {shouldShowDeleteButton ? (
-            <button
-              type="button"
-              onClick={() => onNoteDeleted(id)}
-              className="w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
-            >
-              Deseja{' '}
-              <span className="text-red-400 hover:underline group-hover:underline">
-                apagar essa nota
-              </span>
-              ?
-            </button>
+            confirmDelete ? (
+              <div className='flex flex-row'>
+                <button
+                  type="button"
+                  onClick={() => onNoteDeleted(id)}
+                  className="w-[50%] bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
+                >
+                  <span className="text-red-400 hover:underline group-hover:underline">
+                    Apagar essa nota
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setConfirmDelete(false)}
+                  className="w-[50%] bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
+                >
+                  <span className="text-lime-400 hover:underline group-hover:underline">
+                    Não apagar essa nota
+                  </span>
+                </button>
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setConfirmDelete(true)}
+                className="w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
+              >
+                Deseja{' '}
+                <span className="text-red-400 hover:underline group-hover:underline">
+                  apagar essa nota
+                </span>
+                ?
+              </button>
+            )
           ) : (
             <div className="flex flex-row">
               <button

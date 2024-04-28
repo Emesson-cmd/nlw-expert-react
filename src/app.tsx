@@ -4,6 +4,7 @@ import { NewNoteCard } from './components/new-note-card';
 import { NoteCard } from './components/note-card';
 import SearchNotes from './components/search-notes';
 import Separator from './components/separator';
+import { toast } from 'sonner';
 
 interface Note {
   id: string;
@@ -57,6 +58,9 @@ export function App() {
     setNotes(notesArray);
 
     localStorage.setItem('notes', JSON.stringify(notesArray));
+
+    
+    toast.success("Nota deletada com sucesso!")
   }
 
   function handleSearch(event: ChangeEvent<HTMLInputElement>) {
@@ -82,7 +86,7 @@ export function App() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 auto-rows-[250px] gap-6">
         <NewNoteCard onNoteCreated={onNoteCreated} />
-        
+
         {filteredNotes.map((note) => (
           <NoteCard key={note.id} note={note} onNoteDeleted={onNoteDeleted} onNoteEdited={onNoteEdited} />
         ))}
