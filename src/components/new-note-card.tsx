@@ -31,6 +31,12 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
     event.preventDefault();
 
     if (content === '') {
+      if (shouldShowOnboarding) {
+        toast.info('Escolha uma opção para escrever o conteúdo.');
+      } else {
+        toast.info('Vocë ainda náo tem nenhum conteúdo.');
+      }
+
       return;
     }
 

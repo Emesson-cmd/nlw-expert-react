@@ -22,8 +22,8 @@ export function NoteCard({
 }: NoteCardProps) {
   const [content, setContent] = useState(currentContent);
   const [shouldShowDeleteButton, setShouldShowDeleteButton] = useState(true);
-  const [open, setOpen] = useState(false)
-  
+  const [open, setOpen] = useState(false);
+
   function handleContentChange(event: ChangeEvent<HTMLTextAreaElement>) {
     setContent(event.target.value);
     setShouldShowDeleteButton(false);
@@ -35,10 +35,15 @@ export function NoteCard({
   }
 
   function handleSaveEditing() {
+    if (content === '') {
+      toast.info('Vocë náo tem nenhum conteúdo.');
+      return;
+    }
+
     onNoteEdited(id, content);
 
-    setOpen(false)
-    
+    setOpen(false);
+
     toast.success('Nota salva com sucesso!');
   }
 
