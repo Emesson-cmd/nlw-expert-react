@@ -7,13 +7,13 @@ interface NewNoteCardProps {
   onNoteCreated: (content: string) => void;
 }
 
-let speechRecognition: SpeechRecognition | null = null
+let speechRecognition: SpeechRecognition | null = null;
 
 export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
   const [shouldShowOnboarding, setShouldShowOnboarding] = useState(true);
   const [isRecording, setIsRecording] = useState(false);
   const [content, setContent] = useState('');
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
 
   function handleStartEditor() {
     setShouldShowOnboarding(false);
@@ -39,7 +39,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
     setContent('');
     setShouldShowOnboarding(true);
 
-    setOpen(false)
+    setOpen(false);
 
     toast.success('Nota salva com sucesso!');
   }
@@ -49,7 +49,12 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
       'SpeechRecognition' in window || 'webkitSpeechRecognition' in window;
 
     if (!isSpeechRecognitionAPIAvailable) {
-      alert('Infelizmente seu navegador não suporta a API de gravação!');
+      toast.error('Infelizmente seu navegador não suporta a API de gravação!');
+      return;
+    }
+
+    if ('brave' in navigator) {
+      toast.error('Navegador Brave ainda não é compatível com digitação por voz.');
       return;
     }
 
@@ -83,7 +88,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
   function handleStopRecording() {
     setIsRecording(false);
 
-    speechRecognition?.stop()
+    speechRecognition?.stop();
   }
 
   return (
