@@ -22,7 +22,8 @@ export function NoteCard({
 }: NoteCardProps) {
   const [content, setContent] = useState(currentContent);
   const [shouldShowDeleteButton, setShouldShowDeleteButton] = useState(true);
-
+  const [open, setOpen] = useState(false)
+  
   function handleContentChange(event: ChangeEvent<HTMLTextAreaElement>) {
     setContent(event.target.value);
     setShouldShowDeleteButton(false);
@@ -35,11 +36,14 @@ export function NoteCard({
 
   function handleSaveEditing() {
     onNoteEdited(id, content);
+
+    setOpen(false)
+    
     toast.success('Nota salva com sucesso!');
   }
 
   return (
-    <Dialog.Root>
+    <Dialog.Root open={open} onOpenChange={setOpen}>
       <Dialog.Trigger className="rounded-md text-left flex flex-col bg-slate-800 p-5 gap-3 overflow-hidden relative outline-none hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400">
         <span className="text-sm font-medium text-slate-300">
           {formatDistanceToNow(date, { locale: ptBR, addSuffix: true })}
