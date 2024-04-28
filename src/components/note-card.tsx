@@ -2,6 +2,8 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { X } from 'lucide-react';
+import { ChangeEvent, useState } from 'react';
+import { toast } from 'sonner';
 
 interface NoteCardProps {
   note: {
@@ -10,9 +12,32 @@ interface NoteCardProps {
     content: string;
   };
   onNoteDeleted: (id: string) => void;
+  onNoteEdited: (id: string, content: string) => void;
 }
 
-export function NoteCard({ note: { id, date, content }, onNoteDeleted }: NoteCardProps) {
+export function NoteCard({
+  note: { id, date, content: currentContent },
+  onNoteDeleted,
+  onNoteEdited,
+}: NoteCardProps) {
+  const [content, setContent] = useState(currentContent);
+  const [shouldShowDeleteButton, setShouldShowDeleteButton] = useState(true);
+
+  function handleContentChange(event: ChangeEvent<HTMLTextAreaElement>) {
+    setContent(event.target.value);
+    setShouldShowDeleteButton(false);
+  }
+
+  function handleResetEditing() {
+    setContent(currentContent);
+    setShouldShowDeleteButton(true);
+  }
+
+  function handleSaveEditing() {
+    onNoteEdited(id, content);
+    toast.success('Nota salva com sucesso!');
+  }
+
   return (
     <Dialog.Root>
       <Dialog.Trigger className="rounded-md text-left flex flex-col bg-slate-800 p-5 gap-3 overflow-hidden relative outline-none hover:ring-2 hover:ring-slate-600 focus-visible:ring-2 focus-visible:ring-lime-400">
@@ -37,20 +62,48 @@ export function NoteCard({ note: { id, date, content }, onNoteDeleted }: NoteCar
               {formatDistanceToNow(date, { locale: ptBR, addSuffix: true })}
             </span>
 
-            <p className="text-sm leading-6 text-slate-400">{content}</p>
+            {/* <p className="text-sm leading-6 text-slate-400 bg-white">{content}</p> */}
+            <textarea
+              autoFocus
+              className="text-sm leading-6 text-slate-400 bg-transparent resize-none flex-1 outline-none"
+              onChange={handleContentChange}
+              value={content}
+            />
           </div>
 
-          <button
-            type="button"
-            onClick={() => onNoteDeleted(id)}
-            className="w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
-          >
-            Deseja{' '}
-            <span className="text-red-400 hover:underline group-hover:underline">
-              apagar essa nota
-            </span>
-            ?
-          </button>
+          {shouldShowDeleteButton ? (
+            <button
+              type="button"
+              onClick={() => onNoteDeleted(id)}
+              className="w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
+            >
+              Deseja{' '}
+              <span className="text-red-400 hover:underline group-hover:underline">
+                apagar essa nota
+              </span>
+              ?
+            </button>
+          ) : (
+            <div className="flex flex-row">
+              <button
+                type="button"
+                onClick={handleResetEditing}
+                className="w-[50%] bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
+              >
+                <span className="text-red-400 hover:underline group-hover:underline">
+                  Resetar edição
+                </span>
+              </button>
+
+              <button
+                type="button"
+                className="w-[50%] bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-medium hover:bg-lime-500"
+                onClick={handleSaveEditing}
+              >
+                Salvar edição
+              </button>
+            </div>
+          )}
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>
