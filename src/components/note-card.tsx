@@ -2,8 +2,9 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { X } from 'lucide-react';
-import { ChangeEvent, useState } from 'react';
+import {  useState } from 'react';
 import { toast } from 'sonner';
+import RichEditor from './rich-editor';
 
 interface NoteCardProps {
   note: {
@@ -25,8 +26,8 @@ export function NoteCard({
   const [open, setOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
 
-  function handleContentChange(event: ChangeEvent<HTMLTextAreaElement>) {
-    setContent(event.target.value);
+  function handleContentChange(value: string) {
+    setContent(value);
     setShouldShowDeleteButton(false);
   }
 
@@ -55,15 +56,15 @@ export function NoteCard({
           {formatDistanceToNow(date, { locale: ptBR, addSuffix: true })}
         </span>
 
-        <p className="text-sm leading-6 text-slate-400">{content}</p>
+        <RichEditor readOnly value={content} />
 
         <div className="absolute bottom-0 left-0 right-0 h-1/2 bg-gradient-to-t from-black/60 to-black/0 pointer-events-none" />
       </Dialog.Trigger>
 
       <Dialog.Portal>
         <Dialog.Overlay className="inset-0 fixed bg-black/50" />
-        <Dialog.Content className="fixed  overflow-hidden inset-0 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-[640px] w-full md:h-[60vh] bg-slate-700 md:rounded-md flex flex-col outline-none">
-          <Dialog.Close className="absolute top-0 right-0 bg-slate-800 p-1.5 text-slate-400 hover:text-slate-100">
+        <Dialog.Content className="fixed inset-0 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-[640px] w-full md:h-[60vh] bg-slate-700 md:rounded-md flex flex-col outline-none">
+          <Dialog.Close className="absolute top-0 right-0 rounded-tr-md bg-slate-800 p-1.5 text-slate-400 hover:text-slate-100">
             <X className="size-5" />
           </Dialog.Close>
 
@@ -72,72 +73,68 @@ export function NoteCard({
               {formatDistanceToNow(date, { locale: ptBR, addSuffix: true })}
             </span>
 
-            {/* <p className="text-sm leading-6 text-slate-400 bg-white">{content}</p> */}
-            <textarea
-              autoFocus
-              className="text-sm leading-6 text-slate-400 bg-transparent resize-none flex-1 outline-none"
-              onChange={handleContentChange}
-              value={content}
-            />
+            <RichEditor onChange={handleContentChange} value={content} />
           </div>
 
-          {shouldShowDeleteButton ? (
-            confirmDelete ? (
-              <div className='flex flex-row'>
+          <div className='rounded-br-md rounded-bl-md overflow-hidden'>
+            {shouldShowDeleteButton ? (
+              confirmDelete ? (
+                <div className="flex flex-row">
+                  <button
+                    type="button"
+                    onClick={() => onNoteDeleted(id)}
+                    className="w-[50%] bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
+                  >
+                    <span className="text-red-400 hover:underline group-hover:underline">
+                      Apagar essa nota
+                    </span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setConfirmDelete(false)}
+                    className="w-[50%] bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
+                  >
+                    <span className="text-lime-400 hover:underline group-hover:underline">
+                      Não apagar essa nota
+                    </span>
+                  </button>
+                </div>
+              ) : (
                 <button
                   type="button"
-                  onClick={() => onNoteDeleted(id)}
+                  onClick={() => setConfirmDelete(true)}
+                  className="w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
+                >
+                  Deseja{' '}
+                  <span className="text-red-400 hover:underline group-hover:underline">
+                    apagar essa nota
+                  </span>
+                  ?
+                </button>
+              )
+            ) : (
+              <div className="flex flex-row">
+                <button
+                  type="button"
+                  onClick={handleResetEditing}
                   className="w-[50%] bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
                 >
                   <span className="text-red-400 hover:underline group-hover:underline">
-                    Apagar essa nota
+                    Resetar edição
                   </span>
                 </button>
 
                 <button
                   type="button"
-                  onClick={() => setConfirmDelete(false)}
-                  className="w-[50%] bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
+                  className="w-[50%] bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-medium hover:bg-lime-500"
+                  onClick={handleSaveEditing}
                 >
-                  <span className="text-lime-400 hover:underline group-hover:underline">
-                    Não apagar essa nota
-                  </span>
+                  Salvar edição
                 </button>
               </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setConfirmDelete(true)}
-                className="w-full bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
-              >
-                Deseja{' '}
-                <span className="text-red-400 hover:underline group-hover:underline">
-                  apagar essa nota
-                </span>
-                ?
-              </button>
-            )
-          ) : (
-            <div className="flex flex-row">
-              <button
-                type="button"
-                onClick={handleResetEditing}
-                className="w-[50%] bg-slate-800 py-4 text-center text-sm text-slate-300 outline-none font-medium group"
-              >
-                <span className="text-red-400 hover:underline group-hover:underline">
-                  Resetar edição
-                </span>
-              </button>
-
-              <button
-                type="button"
-                className="w-[50%] bg-lime-400 py-4 text-center text-sm text-lime-950 outline-none font-medium hover:bg-lime-500"
-                onClick={handleSaveEditing}
-              >
-                Salvar edição
-              </button>
-            </div>
-          )}
+            )}
+          </div>
         </Dialog.Content>
       </Dialog.Portal>
     </Dialog.Root>

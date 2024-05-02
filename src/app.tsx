@@ -59,8 +59,7 @@ export function App() {
 
     localStorage.setItem('notes', JSON.stringify(notesArray));
 
-    
-    toast.success("Nota deletada com sucesso!")
+    toast.success('Nota deletada com sucesso!');
   }
 
   function handleSearch(event: ChangeEvent<HTMLInputElement>) {
@@ -78,7 +77,7 @@ export function App() {
 
   return (
     <div className="mx-auto max-w-6xl my-12 space-y-6 px-5 xl:px-0">
-      <img src={logo} alt="logo nlw expert" />
+      <img id="logo" src={logo} alt="logo nlw expert" />
 
       <SearchNotes onChange={handleSearch} />
 
@@ -88,7 +87,12 @@ export function App() {
         <NewNoteCard onNoteCreated={onNoteCreated} />
 
         {filteredNotes.map((note) => (
-          <NoteCard key={note.id} note={note} onNoteDeleted={onNoteDeleted} onNoteEdited={onNoteEdited} />
+          <NoteCard
+            key={note.id}
+            note={note}
+            onNoteDeleted={onNoteDeleted}
+            onNoteEdited={onNoteEdited}
+          />
         ))}
       </div>
     </div>

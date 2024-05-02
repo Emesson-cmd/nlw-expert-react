@@ -1,7 +1,8 @@
 import * as Dialog from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
-import { ChangeEvent, FormEvent, useState } from 'react';
+import { FormEvent, useState } from 'react';
 import { toast } from 'sonner';
+import RichEditor from './rich-editor';
 
 interface NewNoteCardProps {
   onNoteCreated: (content: string) => void;
@@ -19,10 +20,11 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
     setShouldShowOnboarding(false);
   }
 
-  function handleContentChange(event: ChangeEvent<HTMLTextAreaElement>) {
-    setContent(event.target.value);
+  function handleContentChange(value: string) {
 
-    if (event.target.value === '') {
+    setContent(value);
+
+    if (value === '<p><br></p>') {
       setShouldShowOnboarding(true);
     }
   }
@@ -107,14 +109,14 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
       </Dialog.Trigger>
 
       <Dialog.Portal>
-        <Dialog.Overlay className="inset-0 fixed bg-black/50" />
-        <Dialog.Content className="fixed  overflow-hidden inset-0 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-[640px] w-full md:h-[60vh] bg-slate-700 md:rounded-md flex flex-col outline-none">
+        <Dialog.Overlay className="inset-0 fixed bg-black/50 " />
+        <Dialog.Content className="fixed inset-0 md:inset-auto md:left-1/2 md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:max-w-[640px] w-full md:h-[60vh] bg-slate-700 md:rounded-md flex flex-col outline-none md:max-h-[70vh]">
           <Dialog.Close className="absolute top-0 right-0 bg-slate-800 p-1.5 text-slate-400 hover:text-slate-100">
             <X className="size-5" />
           </Dialog.Close>
 
-          <form className="flex-1 flex flex-col">
-            <div className="flex flex-1 flex-col gap-3 p-5">
+          <form className="flex-1 flex flex-col max-h-[100vh] md:max-h-[60vh]">
+            <div className="flex flex-1 flex-col gap-3 p-5 h-0">
               <span className="text-sm font-medium text-slate-300">Aidiconar nota</span>
 
               {shouldShowOnboarding ? (
@@ -138,12 +140,7 @@ export function NewNoteCard({ onNoteCreated }: NewNoteCardProps) {
                   .
                 </p>
               ) : (
-                <textarea
-                  autoFocus
-                  className="text-sm leading-6 text-slate-400 bg-transparent resize-none flex-1 outline-none"
-                  onChange={handleContentChange}
-                  value={content}
-                />
+                <RichEditor onChange={handleContentChange} value={content} />
               )}
             </div>
 
