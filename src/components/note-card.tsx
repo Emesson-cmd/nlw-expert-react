@@ -68,7 +68,7 @@ export function NoteCard({
             <X className="size-5" />
           </Dialog.Close>
 
-          <div className="flex flex-1 flex-col gap-3 p-5">
+          <div className="flex flex-1 flex-col gap-3 p-5  max-h-[calc(100%-3rem)]">
             <span className="text-sm font-medium text-slate-300">
               {formatDistanceToNow(date, { locale: ptBR, addSuffix: true })}
             </span>
